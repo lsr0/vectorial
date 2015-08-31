@@ -16,16 +16,27 @@ extern "C" {
 
 
 typedef float simd4f __attribute__ ((vector_size (16)));
+typedef uint32_t simd4u __attribute__ ((vector_size (16)));
 
 typedef union {
     simd4f s ;
     float f[4];
 } _simd4f_union;
 
+typedef union {
+    simd4u s ;
+    uint32_t f[4];
+} _simd4u_union;
+
 vectorial_inline float simd4f_get_x(simd4f s) { _simd4f_union u={s}; return u.f[0]; }
 vectorial_inline float simd4f_get_y(simd4f s) { _simd4f_union u={s}; return u.f[1]; }
 vectorial_inline float simd4f_get_z(simd4f s) { _simd4f_union u={s}; return u.f[2]; }
 vectorial_inline float simd4f_get_w(simd4f s) { _simd4f_union u={s}; return u.f[3]; }
+
+vectorial_inline uint32_t simd4u_get_x(simd4f s) { _simd4u_union u={s}; return u.f[0]; }
+vectorial_inline uint32_t simd4u_get_y(simd4f s) { _simd4u_union u={s}; return u.f[1]; }
+vectorial_inline uint32_t simd4u_get_z(simd4f s) { _simd4u_union u={s}; return u.f[2]; }
+vectorial_inline uint32_t simd4u_get_w(simd4f s) { _simd4u_union u={s}; return u.f[3]; }
 
 
 vectorial_inline simd4f simd4f_create(float x, float y, float z, float w) {
@@ -214,6 +225,9 @@ vectorial_inline simd4f simd4f_max(simd4f a, simd4f b) {
                           ua.f[3] > ub.f[3] ? ua.f[3] : ub.f[3] );
 }
 
+vectorial_inline simd4u simd4f_gt(simd4f a, simd4f b) {
+    return a > b;
+}
 
 
 #ifdef __cplusplus

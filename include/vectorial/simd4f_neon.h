@@ -16,6 +16,7 @@ extern "C" {
 
 typedef float32x4_t simd4f;
 typedef float32x2_t simd2f;
+typedef uint32x4_t  simd4u;
 
 typedef union {
     simd4f s ;
@@ -188,6 +189,11 @@ vectorial_inline float simd4f_get_y(simd4f s) { return vgetq_lane_f32(s, 1); }
 vectorial_inline float simd4f_get_z(simd4f s) { return vgetq_lane_f32(s, 2); }
 vectorial_inline float simd4f_get_w(simd4f s) { return vgetq_lane_f32(s, 3); }
 
+vectorial_inline uint32_t simd4u_get_x(simd4f s) { return vgetq_lane_s32(s, 0); }
+vectorial_inline uint32_t simd4u_get_y(simd4f s) { return vgetq_lane_s32(s, 1); }
+vectorial_inline uint32_t simd4u_get_z(simd4f s) { return vgetq_lane_s32(s, 2); }
+vectorial_inline uint32_t simd4u_get_w(simd4f s) { return vgetq_lane_s32(s, 3); }
+
 // This function returns x*x+y*y+z*z and ignores the w component.
 vectorial_inline float simd4f_dot3_scalar(simd4f lhs, simd4f rhs) {
     const simd4f m = simd4f_mul(lhs, rhs);
@@ -271,6 +277,52 @@ vectorial_inline simd4f simd4f_max(simd4f a, simd4f b) {
     return vmaxq_f32( a, b ); 
 }
 
+vectorial_inline simd4u simd4f_gt(simd4f a, simd4f b) {
+    return vcgtq_f32( a, b );
+}
+
+vectorial_inline simd4u simd4f_gte(simd4f a, simd4f b) {
+    return vcgteq_f32( a, b );
+}
+
+vectorial_inline simd4u simd4f_lte(simd4f a, simd4f b) {
+    return vclteq_f32( a, b );
+}
+
+vectorial_inline float simd4f_cwise_min3(simd4f v) {
+    simd4f v_xy = vget_low_f32(v);
+    simd4f v_zz = vget_lane_f32(v, 2);
+    simd4f min = vpmin_f32(v_xy, v_zz);
+    min = vpmin_f32(min, min);
+    
+    return vget_lane_f32(min, 0);
+}
+
+vectorial_inline unsigned int simd4u_cwise_min(simd4u v) {
+    simd4u v_low = vget_low_s32(v);
+    simd4u v_high = vget_high_s32(v);
+    simd4u min = vpmin_s32(v_low, v_high);
+    min = vpmin_s32(min, min);
+    
+    return vget_lane_s32(min, 0);
+}
+
+vectorial_inline unsigned int simd4u_cwise_if3(simd4u v) {
+    simd4u v_xy = vget_low_s32(v);
+    simd4u v_z = vget_lane_s32(v, 2);
+    simd4u min = vpmin_s32(v_xy, v_z);
+    min = vpmin_s32(min, min);
+    
+    return vget_lane_s32(min, 0);
+}
+
+vectorial_inline simd4u simd4f_and(simd4f a, simd4f b) {
+    return vandq_u32(vreinterpretq_f32_u32(a), vreinterpretq_f32_u32(b));
+}
+
+vectorial_inline simd4u simd4u_and(simd4u a, simd4u b) {
+    return vandq_u32(a, b);
+}
 
 #ifdef __cplusplus
 }

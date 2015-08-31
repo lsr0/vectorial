@@ -21,6 +21,7 @@
 #define should_be_equal_vec4f( a, b, tolerance) should_be_equal_vec4f_(this, a,b,tolerance,__FILE__,__LINE__)
 #define should_be_equal_vec3f( a, b, tolerance) should_be_equal_vec3f_(this, a,b,tolerance,__FILE__,__LINE__)
 #define should_be_equal_vec2f( a, b, tolerance) should_be_equal_vec2f_(this, a,b,tolerance,__FILE__,__LINE__)
+#define should_be_equal_simd4u( a, b) should_be_equal_simd4u_(this, a,b,__FILE__,__LINE__)
 
 #define should_be_equal_simd4x4f( a, b, tolerance) should_be_equal_simd4x4f_(this, a,b,tolerance,__FILE__,__LINE__)
 
@@ -101,6 +102,21 @@ static inline void should_be_equal_simd4f_(specific::SpecBase *spec, const simd4
     
     std::stringstream ss;
     ss << a << " == " << b << " (with tolerance of " << tolerance << ")";
+    spec->should_test(equal, ss.str().c_str(), file, line);
+    
+    
+}
+
+static inline void should_be_equal_simd4u_(specific::SpecBase *spec, const simd4u& a, const simd4u& b, const char *file, int line) {
+    
+    bool equal=true;
+    if( simd4u_get_x(a) != simd4u_get_x(b) ) equal = false;
+    if( simd4u_get_y(a) != simd4u_get_y(b) ) equal = false;
+    if( simd4u_get_z(a) != simd4u_get_z(b) ) equal = false;
+    if( simd4u_get_w(a) != simd4u_get_w(b) ) equal = false;
+    
+    std::stringstream ss;
+    ss << a << " == " << b;
     spec->should_test(equal, ss.str().c_str(), file, line);
     
     
