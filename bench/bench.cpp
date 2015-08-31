@@ -107,9 +107,9 @@ void matrix_bench();
 
 int main() {
     
-//    add_bench();
-//    dot_bench();
-//    quad_bench();
+    add_bench();
+    dot_bench();
+    quad_bench();
     matrix_bench();
 
     return 0;
