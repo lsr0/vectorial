@@ -28,18 +28,29 @@ extern "C" {
 
 
 typedef __m128 simd4f; 
+typedef __m128i simd4u;
 
 typedef union {
     simd4f s ;
     float f[4];
     unsigned int ui[4];
 } _simd4f_union;
+typedef union {
+    simd4u s ;
+    float f[4];
+    unsigned int ui[4];
+} _simd4u_union;
 
 // creating
 
 vectorial_inline simd4f simd4f_create(float x, float y, float z, float w) {
     simd4f s = { x, y, z, w };
     return s;
+}
+
+vectorial_inline simd4u simd4u_create(unsigned int x, unsigned int y, unsigned int z, unsigned int w) {
+    simd4f_aligned16 unsigned int a[4] = { x, y, z, w };
+    return _mm_load_si128(reinterpret_cast<const simd4u*>(a));
 }
 
 vectorial_inline simd4f simd4f_zero() { return _mm_setzero_ps(); }
@@ -62,6 +73,10 @@ vectorial_inline simd4f simd4f_uload2(const float *ary) {
 
 vectorial_inline void simd4f_ustore4(const simd4f val, float *ary) {
     _mm_storeu_ps(ary, val);
+}
+
+vectorial_inline void simd4u_ustore4(const simd4u val, uint32_t *ary) {
+    _mm_store_si128( (simd4u*)ary, val);
 }
 
 vectorial_inline void simd4f_ustore3(const simd4f val, float *ary) {
@@ -154,6 +169,10 @@ vectorial_inline float simd4f_get_x(simd4f s) { _simd4f_union u={s}; return u.f[
 vectorial_inline float simd4f_get_y(simd4f s) { _simd4f_union u={s}; return u.f[1]; }
 vectorial_inline float simd4f_get_z(simd4f s) { _simd4f_union u={s}; return u.f[2]; }
 vectorial_inline float simd4f_get_w(simd4f s) { _simd4f_union u={s}; return u.f[3]; }
+vectorial_inline unsigned int simd4u_get_x(simd4u s) { _simd4u_union u={s}; return u.ui[0]; }
+vectorial_inline unsigned int simd4u_get_y(simd4u s) { _simd4u_union u={s}; return u.ui[1]; }
+vectorial_inline unsigned int simd4u_get_z(simd4u s) { _simd4u_union u={s}; return u.ui[2]; }
+vectorial_inline unsigned int simd4u_get_w(simd4u s) { _simd4u_union u={s}; return u.ui[3]; }
 
 vectorial_inline simd4f simd4f_dot3(simd4f lhs,simd4f rhs) {
 #if defined(VECTORIAL_USE_SSE4_1)
@@ -226,7 +245,72 @@ vectorial_inline simd4f simd4f_max(simd4f a, simd4f b) {
     return _mm_max_ps( a, b ); 
 }
 
+vectorial_inline simd4u simd4f_gt(simd4f a, simd4f b) {
+    return _mm_castps_si128(_mm_cmpgt_ps( a, b ));
+}
 
+vectorial_inline simd4u simd4f_gte(simd4f a, simd4f b) {
+    return _mm_castps_si128(_mm_cmpge_ps( a, b ));
+}
+
+vectorial_inline simd4u simd4f_lte(simd4f a, simd4f b) {
+    return _mm_castps_si128(_mm_cmple_ps( a, b ));
+}
+
+vectorial_inline float simd4f_cwise_min3(simd4f v) {
+    simd4f min1 = _mm_shuffle_ps( v, v, _MM_SHUFFLE(1,1,1,1) );
+    simd4f min2 = _mm_min_ps( v, min1 );
+    // min2 = m01 1 m12 m13
+    simd4f min3 = _mm_shuffle_ps( v, v, _MM_SHUFFLE(2,2,2,2) );
+    // min3 = 2 2 2 2
+    simd4f min4 = _mm_min_ps( min2, min3 );
+    // min4 = m012 m12 m12 m123
+    return simd4f_get_x( min4 );
+}
+
+vectorial_inline float simd4f_cwise_max3(simd4f v) {
+    simd4f max1 = _mm_shuffle_ps( v, v, _MM_SHUFFLE(1,1,1,1) );
+    simd4f max2 = _mm_max_ps( v, max1 );
+    // max2 = m01 1 m12 m13
+    simd4f max3 = _mm_shuffle_ps( v, v, _MM_SHUFFLE(2,2,2,2) );
+    // max3 = 2 2 2 2
+    simd4f max4 = _mm_max_ps( max2, max3 );
+    // max4 = m012 m12 m12 m123
+    return simd4f_get_x( max4 );
+}
+
+vectorial_inline unsigned int simd4u_cwise_min(simd4u v) {
+    __m128i min1 = _mm_shuffle_epi32( v, _MM_SHUFFLE(0,0,3,2) );
+    __m128i min2 = _mm_min_epi32( v, min1 );
+    // min2 = x 01 23 23
+    __m128i min3 = _mm_shuffle_epi32( min2, _MM_SHUFFLE(0,0,0,1) );
+    // min3 = x  x  x 01
+    __m128i min4 = _mm_min_epi32( min2, min3 );
+    // min4 = x  x  x 0123
+    return _mm_cvtsi128_si32( min4 );
+}
+
+vectorial_inline unsigned int simd4u_cwise_if3(simd4u v) {
+    __m128i v_xyzz = _mm_shuffle_epi32( v, _MM_SHUFFLE(0,1,2,2) );
+    unsigned int test = _mm_movemask_epi8( v_xyzz );
+    return (test == 0xffff);
+}
+
+vectorial_inline simd4u simd4f_and(simd4f a, simd4f b) {
+    return _mm_castps_si128(_mm_and_ps( a, b ));
+}
+
+vectorial_inline simd4u simd4u_and(simd4u a, simd4u b) {
+    return _mm_castps_si128(_mm_and_ps( _mm_castsi128_ps(a), _mm_castsi128_ps(b) ));
+}
+
+vectorial_inline simd4u simd4f_as_simd4u(simd4f v) {
+    return _mm_castps_si128(v);
+}
+
+vectorial_inline simd4f simd4u_as_simd4f(simd4u v) {
+    return _mm_castsi128_ps(v);
+}
 
 #ifdef __cplusplus
 }

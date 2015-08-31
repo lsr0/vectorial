@@ -40,6 +40,13 @@
                        << simd4f_get_w(v) << ")";
             return os;
         }
+        vectorial_inline std::ostream& operator<<(std::ostream& os, const simd4u& v) {
+            os << "simd4u(" << simd4u_get_x(v) << ", "
+                       << simd4u_get_y(v) << ", "
+                       << simd4u_get_z(v) << ", "
+                       << simd4u_get_w(v) << ")";
+            return os;
+        }
     #endif
 
 #endif

@@ -451,6 +451,37 @@ describe(simd4f, "zeroing")
 
 }
 
+describe(simd4f, "gt")
+{
+
+    it("gt should work")
+    {
+        simd4f a = simd4f_create(1.0f, 2.0f, 3.0f, 4.0f);
+        simd4f b = simd4f_create(0.0f, 2.0f, 4.0f, 4.0f);
+        simd4u mask = simd4f_gt(a, b);
+        should_be_equal_simd4u(mask, simd4u_create(0xffffffff, 0, 0, 0));
+    }
+
+    it("and all false")
+    {
+        simd4f a = simd4f_create(1.0f, 2.0f, 3.0f, 4.0f);
+        simd4f b = simd4f_create(0.0f, 2.0f, 4.0f, 4.0f);
+        simd4u mask = simd4f_gt(a, b);
+        should_be_equal_simd4u(mask, simd4u_create(0xffffffff, 0, 0, 0));
+        unsigned int all_gt = simd4u_cwise_if3(mask);
+        should_test(all_gt == 0, "YEP", __FILE__, __LINE__);
+    }
+
+    it("and all")
+    {
+        simd4f a = simd4f_create(1.0f, 3.0f, 5.0f, 4.0f);
+        simd4f b = simd4f_create(0.0f, 2.0f, 4.0f, 4.0f);
+        simd4u mask = simd4f_gt(a, b);
+        should_be_equal_simd4u(mask, simd4u_create(0xffffffff, 0xffffffff, 0xffffffff, 0));
+        unsigned int all_gt = simd4u_cwise_if3(mask);
+        should_test(all_gt, "YEP", __FILE__, __LINE__);
+    }
+}
 
 
 

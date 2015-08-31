@@ -21,6 +21,12 @@ typedef struct {
     float w;
 } simd4f;
 
+typedef struct { 
+    uint32_t x;
+    uint32_t y; 
+    uint32_t z; 
+    uint32_t w;
+} simd4u;
 
 
 vectorial_inline simd4f simd4f_create(float x, float y, float z, float w) {
@@ -189,6 +195,12 @@ vectorial_inline simd4f simd4f_max(simd4f a, simd4f b) {
                           a.w > b.w ? a.w : b.w );
 }
 
+vectorial_inline simd4u simd4f_gt(simd4f a, simd4f b) {
+    return simd4f_create( a.x > b.x ? 0xffffffff : 0x0, 
+                          a.y > b.y ? 0xffffffff : 0x0, 
+                          a.z > b.z ? 0xffffffff : 0x0, 
+                          a.w > b.w ? 0xffffffff : 0x0 );
+}
 
 #ifdef __cplusplus
 }
