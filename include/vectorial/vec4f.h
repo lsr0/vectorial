@@ -20,7 +20,7 @@ namespace vectorial {
     class vec4f {
     public:
 
-        simd4f value;
+        simd4f value simd4f_aligned16;
     
         inline vec4f() {}
         inline vec4f(const vec4f& v) : value(v.value) {}
@@ -51,7 +51,7 @@ namespace vectorial {
         inline vec3f xyz() const;
         inline vec2f xy() const;
 
-    };
+    } simd4f_aligned16;
 
 
     vectorial_inline vec4f operator-(const vec4f& lhs) {

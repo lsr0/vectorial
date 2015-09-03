@@ -19,9 +19,9 @@ typedef float32x2_t simd2f;
 typedef uint32x4_t  simd4u;
 
 typedef union {
-    simd4f s ;
-    float f[4];
-} _simd4f_union;
+    simd4f s simd4f_aligned16;
+    float f[4] simd4f_aligned16;
+} simd4f_aligned16 _simd4f_union;
 
 
 
