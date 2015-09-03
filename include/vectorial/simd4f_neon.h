@@ -297,29 +297,29 @@ vectorial_inline simd4u simd4f_lte(simd4f a, simd4f b) {
 
 vectorial_inline float simd4f_cwise_min3(simd4f v) {
     simd2f v_xy = vget_low_f32(v);
-    simd2f v_zz = vdup_n_f32(vget_lane_f32(vget_high_f32(v), 0));
-    simd2f min = vpmin_f32(v_xy, v_zz);
-    min = vpmin_f32(min, min);
+    simd2f v_yz = vext_f32(v_xy, vget_high_f32(v), 1);
+    simd2f v_xy_yz = vpmin_f32(v_xy, v_yz);
+    v_xy_yz = vpmin_f32(v_xy_yz, v_xy_yz);
     
-    return vget_lane_f32(min, 0);
+    return vget_lane_f32(v_xy_yz, 0);
 }
 
 vectorial_inline float simd4f_cwise_max3(simd4f v) {
     simd2f v_xy = vget_low_f32(v);
-    simd2f v_zz = vdup_n_f32(vget_lane_f32(vget_high_f32(v), 0));
-    simd2f max = vpmax_f32(v_xy, v_zz);
-    max = vpmax_f32(max, max);
+    simd2f v_yz = vext_f32(v_xy, vget_high_f32(v), 1);
+    simd2f v_xy_yz = vpmax_f32(v_xy, v_yz);
+    v_xy_yz = vpmax_f32(v_xy_yz, v_xy_yz);
     
-    return vget_lane_f32(max, 0);
+    return vget_lane_f32(v_xy_yz, 0);
 }
 
 vectorial_inline unsigned int simd4u_cwise_if3(simd4u v) {
     uint32x2_t v_xy = vget_low_u32(v);
-    uint32x2_t v_zz = vdup_n_u32(vget_lane_u32(vget_high_u32(v), 0));
-    uint32x2_t min = vpmin_u32(v_xy, v_zz);
-    min = vpmin_u32(min, min);
+    uint32x2_t v_yz = vext_u32(v_xy, vget_high_u32(v), 1);
+    uint32x2_t v_xy_yz = vpmin_u32(v_xy, v_yz);
+    v_xy_yz = vpmin_u32(v_xy_yz, v_xy_yz);
     
-    return vget_lane_u32(min, 0);
+    return vget_lane_u32(v_xy_yz, 0);
 }
 
 vectorial_inline simd4u simd4u_and(simd4u a, simd4u b) {
