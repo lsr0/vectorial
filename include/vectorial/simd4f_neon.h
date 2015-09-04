@@ -63,6 +63,10 @@ vectorial_inline void simd4f_ustore4(const simd4f val, float *ary) {
     vst1q_f32( (float32_t*)ary, val);
 }
 
+vectorial_inline void simd4u_ustore4(const simd4u val, uint32_t *ary) {
+    vst1q_u32(ary, val);
+}
+
 vectorial_inline void simd4f_ustore3(const simd4f val, float *ary) {
     float* local_data = ary;
     vst1q_lane_f32(local_data++, val, 0);
