@@ -75,6 +75,10 @@ vectorial_inline void simd4f_ustore4(const simd4f val, float *ary) {
     _mm_storeu_ps(ary, val);
 }
 
+vectorial_inline void simd4u_ustore4(const simd4u val, uint32_t *ary) {
+    _mm_store_si128( (simd4u*)ary, val);
+}
+
 vectorial_inline void simd4f_ustore3(const simd4f val, float *ary) {
     memcpy(ary, &val, sizeof(float) * 3);
 }
@@ -298,6 +302,14 @@ vectorial_inline simd4u simd4f_and(simd4f a, simd4f b) {
 
 vectorial_inline simd4u simd4u_and(simd4u a, simd4u b) {
     return _mm_castps_si128(_mm_and_ps( _mm_castsi128_ps(a), _mm_castsi128_ps(b) ));
+}
+
+vectorial_inline simd4u simd4f_as_simd4u(simd4f v) {
+    return _mm_castps_si128(v);
+}
+
+vectorial_inline simd4f simd4u_as_simd4f(simd4u v) {
+    return _mm_castsi128_ps(v);
 }
 
 #ifdef __cplusplus
