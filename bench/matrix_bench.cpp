@@ -37,6 +37,15 @@ void matrix_func() {
     }    
 }
 
+void matrix_transpose_func() {
+    simd4x4f* vectorial_restrict aa = a;
+
+    for(size_t i = 0; i < NUM; ++i)
+    {
+        simd4x4f_transpose_inplace(&aa[i]);
+    }
+}
+
 void matrix_bench() {
 
     a = alloc_vec4x4f(NUM);
@@ -53,6 +62,7 @@ void matrix_bench() {
     }
         
     profile("matrix mul", matrix_func, ITER, NUM);
+    profile("matrix transpose", matrix_transpose_func, ITER, NUM);
 
     memfree(a);
     memfree(b);
