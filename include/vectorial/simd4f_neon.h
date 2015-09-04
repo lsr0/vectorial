@@ -330,6 +330,14 @@ vectorial_inline simd4u simd4u_and(simd4u a, simd4u b) {
     return vandq_u32(a, b);
 }
 
+vectorial_inline simd4u simd4f_as_simd4u(simd4f v) {
+    return vreinterpretq_u32_f32(v);
+}
+
+vectorial_inline simd4f simd4u_as_simd4f(simd4u v) {
+    return vreinterpretq_f32_u32(v);
+}
+
 #ifdef __cplusplus
 }
 #endif
