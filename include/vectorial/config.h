@@ -12,7 +12,7 @@
 
         #define VECTORIAL_SSE
 
-    #elif defined(__ARM_NEON__) 
+    #elif defined(__ARM_NEON__) || defined(__ARM_NEON)
 
         #define VECTORIAL_NEON
 
